@@ -9,10 +9,11 @@ public class Main {
 		jf.setSize(new Dimension(1200,800));
 		jf.setVisible(true);
 		
-		ImageIcon icone = new ImageIcon("res\\pigeon.png");
+		ImageIcon icone = new ImageIcon("res\\pigeon2.png");
 		JLabel image = new JLabel(icone);
 		jf.add(image);
 		jf.setVisible(true);
+		
 	
 	}
 	
