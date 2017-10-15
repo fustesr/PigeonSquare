@@ -1,27 +1,100 @@
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-import java.util.Random;
-import javax.imageio.*;
+import java.util.ArrayList;
 
-public class Pigeon extends Thread {
-	public String cheminImage = "res\\pigeon.png";
-	public int posx;
-	public int posy;
-	public BufferedImage image;
+import javax.swing.ImageIcon;
+
+import com.sun.org.apache.bcel.internal.generic.LNEG;
+
+class Pigeon extends Thread {
 	
-	public Pigeon(){
+	private double x;
+	private double y;
+	double speed = 2;
+	
+	static Object objectLock = new Object();
+	ListNourriture ln;
+	
+	public Pigeon(ListNourriture ln){
+
+
+		x = (int) (Math.random()*1100);
+		y = (int) (Math.random()*700);
+		this.ln = ln;
 		
-		try {
-			image = ImageIO.read(new File(cheminImage));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		posx = (int)Math.random()*1200;
-		posy = (int)Math.random()*800;
+		//Debug
+		//System.out.println(this.hashCode() + "x: " + x +", y: "+ y);
 
 	}
 	
+	public double getX() {
+		
+		return x;
+	}
+	public double getY() {
+		
+		return y;
+	}
+	
+	public void move(Nourriture n) {
+		
+		double xVel = n.getX() - x;
+		double yVel = n.getY() - y;
+		double mag = Math.sqrt(xVel * xVel + yVel * yVel);
+		xVel = xVel * speed / mag;
+		yVel = yVel * speed / mag;
+
+		if (x < n.getX() && (x + xVel) > n.getX()) {
+			this.x = n.getX();
+		} else if (x != n.getX()) {
+			x += xVel;
+		}
+		if (y < n.getY() && (y + yVel) > n.getY()) {
+			y = n.getY();
+		} else if (y != n.getY()) {
+			y += yVel;
+		}
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void run() {
+
+		while(true) {
+			Nourriture n = null;
+			
+			try {
+				if(!(ln.listN.isEmpty())) {
+					n = ln.listN.get(0);
+					double min = ln.distanceNourriture(this, n);
+					
+						for(Nourriture nou : ln.listN) {
+							if(ln.distanceNourriture(this, nou) < min ) {
+								n = nou;
+								min = (ln.distanceNourriture(this, nou));
+							}
+						}
+	
+					if (min < 20) {
+						n.manger(n,this);
+					}
+					
+					move(n);
+	
+				} else {
+					synchronized(objectLock) {
+						try {
+							objectLock.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} catch(Exception e) {
+				
+			}
+		}
+	}
 }
