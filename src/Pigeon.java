@@ -59,6 +59,10 @@ class Pigeon extends Thread {
 		}
 	}
 	
+	public void moveAfraid() {
+		System.out.println("ok");
+	}
+	
 	@Override
 	public void run() {
 
@@ -66,6 +70,9 @@ class Pigeon extends Thread {
 			Nourriture n = null;
 			
 			try {
+				while(!(Main.lb.isEmpty())) {
+					moveAfraid();
+				}
 				if(!(ln.listN.isEmpty())) {
 					n = ln.listN.get(0);
 					double min = ln.distanceNourriture(this, n);

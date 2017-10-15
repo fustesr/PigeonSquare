@@ -9,13 +9,16 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class Main extends JFrame implements MouseListener {
 	
 	final static int nbPigeon = 10;
 	private MyCanvas canvas = new MyCanvas();
 	static Pigeon[] tabPigeon = new Pigeon[nbPigeon];
+	static ArrayList<Bombe> lb = new ArrayList<Bombe>();
 	static ListNourriture ln;
+
 	
 	int MouseX;
 	int MouseY;
@@ -71,6 +74,7 @@ public class Main extends JFrame implements MouseListener {
 		Image pigeon = new ImageIcon("..\\PigeonSquare\\res\\pigeon2.png").getImage();
 		Image burger = new ImageIcon("..\\PigeonSquare\\res\\burger2.png").getImage();
 		Image burgerNoir = new ImageIcon("..\\PigeonSquare\\res\\burger-noir2.png").getImage();
+		Image bombe = new ImageIcon("..\\PigeonSquare\\res\\bombe.png").getImage();
 		
 		@Override
 		public void paintComponent(Graphics g) {
@@ -88,6 +92,10 @@ public class Main extends JFrame implements MouseListener {
 				for(Nourriture np : ln.listNP) {
 					g.drawImage(burgerNoir, np.getX()-(burgerNoir.getWidth(canvas)/2), np.getY()-(burgerNoir.getHeight(canvas)/2), this);
 				}
+			}
+			
+			for(Bombe b: lb) {
+				g.drawImage(bombe, b.getX()-(bombe.getWidth(canvas)/2), b.getY()-(bombe.getHeight(canvas)/2), this);
 			}
 
 			repaint();
@@ -123,17 +131,24 @@ public class Main extends JFrame implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-
-		MouseX = e.getX();
-		MouseY = e.getY();
-		//System.out.println("MouseX: "+ MouseX + " MouseY: " + MouseY);
-		Nourriture n = new Nourriture(MouseX, MouseY, ln);
-		System.out.print("N: "+ n.hashCode());
-		ln.add(ln.listN, n);
-		
+		if(SwingUtilities.isLeftMouseButton(e)) {
+			MouseX = e.getX();
+			MouseY = e.getY();
+			//System.out.println("MouseX: "+ MouseX + " MouseY: " + MouseY);
+			Nourriture n = new Nourriture(MouseX, MouseY, ln);
+			System.out.print("N: "+ n.hashCode());
+			ln.add(ln.listN, n);
+			
+		} else if(SwingUtilities.isRightMouseButton(e)) {
+			MouseX = e.getX();
+			MouseY = e.getY();
+			Bombe c = new Bombe(MouseX, MouseY);
+			lb.add(c);
+		}
 		synchronized(Pigeon.objectLock) {
 			Pigeon.objectLock.notifyAll();
 		}
+
 	}
 
 }
