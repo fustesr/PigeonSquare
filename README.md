@@ -8,6 +8,7 @@ Groupe de projet :
 - Fustes Raphael
 
 Vous trouverez le fichier JAR éxécutable de notre jeu ainsi que les fichiers sources.
+Note: il se peut que le JAR ne fonctionne pas. Auquel cas, lancer le projet sur Eclipse avec src/ et res/
 
 Résumé:
 
