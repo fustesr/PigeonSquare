@@ -1,29 +1,26 @@
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Main extends JFrame implements MouseListener {
-	
+
+	private static final long serialVersionUID = 1L;
 	final static int nbPigeon = 7;
 	private MyCanvas canvas = new MyCanvas();
 	static Pigeon[] tabPigeon = new Pigeon[nbPigeon];
 	static ListObjet lo;
-
+	
 	int MouseX;
 	int MouseY;
 	
+	//Lock utilisé pour synchroniser l'acces aux collections de nourritures
 	static Object objectLockN = new Object();
 	static Object objectLockNP = new Object();
 	
@@ -49,8 +46,9 @@ public class Main extends JFrame implements MouseListener {
 	
 	public static void main(String[] args) {
 		
-		Main fr = new Main();
+		new Main();
 		
+		// Creation et lancements des threads pigeons 
 		for(int i =0; i < nbPigeon; i++) {
 			tabPigeon[i] = new Pigeon(lo);
 		}
@@ -61,14 +59,16 @@ public class Main extends JFrame implements MouseListener {
 	}
 	
 	
-	
+	// Classe privée qui est le JPanel d'affichage
 	private class MyCanvas extends JPanel {
 		
+		private static final long serialVersionUID = 1L;
 		Image pigeon = new ImageIcon("..\\PigeonSquare\\res\\pigeon3.png").getImage();
 		Image burger = new ImageIcon("..\\PigeonSquare\\res\\burger2.png").getImage();
 		Image burgerNoir = new ImageIcon("..\\PigeonSquare\\res\\burger-noir2.png").getImage();
 		Image bombe = new ImageIcon("..\\PigeonSquare\\res\\bombe.png").getImage();
 		
+		// Fonction principale de dessin
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -77,6 +77,7 @@ public class Main extends JFrame implements MouseListener {
 			for(Pigeon p : tabPigeon) {
 				g.drawImage(pigeon, (int) (p.getX()-(pigeon.getWidth(canvas)/2)),(int) (p.getY()-(pigeon.getHeight(canvas)/2)), this);
 			}
+			// Gestion de la concurrence pour ne pas itérer sur une collection modifiée par un autre Thread
 			synchronized(objectLockN){
 				for(Objet n : lo.listN) {
 					g.drawImage(burger, n.getX()-(burger.getWidth(canvas)/2), n.getY()-(burger.getHeight(canvas)/2), this);
@@ -122,6 +123,7 @@ public class Main extends JFrame implements MouseListener {
 		
 	}
 
+	// Fonction qui gere le clique gauche et droit de la souris et qui reveil les threads endormis
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub

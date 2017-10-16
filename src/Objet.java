@@ -1,4 +1,4 @@
-
+// Classe abstraite mere de Bombe et Nourriture
 public abstract class Objet {
 	
 	protected int x;

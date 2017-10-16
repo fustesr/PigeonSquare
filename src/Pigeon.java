@@ -1,8 +1,3 @@
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-
-import com.sun.org.apache.bcel.internal.generic.LNEG;
 
 class Pigeon extends Thread {
 	
@@ -33,6 +28,7 @@ class Pigeon extends Thread {
 		return y;
 	}
 	
+	// Fonction de déplacement vers les coordonnées xo et yo
 	public void move(int xo, int yo) {
 		
 		double xVel = xo - x;
@@ -58,6 +54,7 @@ class Pigeon extends Thread {
 		}
 	}
 	
+	// Fonction de déplacement de frayeur !
 	public void moveAfraid() {
 		int cpt = 0;
 		speed = 8;
@@ -73,15 +70,22 @@ class Pigeon extends Thread {
 	}
 	
 	@Override
+	
+	// Fonction principal du pigeon
 	public void run() {
 
 		while(true) {
 			Nourriture n = null;
 			
 			try {
+				
+				// Tant que des bombes sont presente sur le terrain ...
 				while(!(lo.listB.isEmpty())) {
+					// ... On effraie les pigeons
 					moveAfraid();
 				}
+				
+				// SI il y a de la nourriture sur le terrain, on calcule la nourriture la plus proche (min) ...
 				if(!(lo.listN.isEmpty())) {
 					n = (Nourriture) lo.listN.get(0);
 					double min = lo.distanceObjet(this, n);
@@ -93,13 +97,17 @@ class Pigeon extends Thread {
 							}
 						}
 	
+					// ... et quand le pigeons est suffisament proche, il le mange
 					if (min < 20) {
 						n.manger(n,this);
 					}
 					
+					// Donc si ils sont pas assez proche, il avance vers la nourriture
 					move(n.getX(),n.getY());
 	
-				} else {
+				} 
+				// SINON, le pigeon s'endort
+				else {
 					synchronized(objectLock) {
 						try {
 							objectLock.wait();

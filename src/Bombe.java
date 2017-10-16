@@ -6,8 +6,7 @@ import javax.swing.Timer;
 public class Bombe extends Objet implements ActionListener {
 	
 	
-	ListObjet lo;
-
+	// Timer d'apparition de la bombe sur le terrain
 	Timer t = new Timer(3000,this);
 	
 	public Bombe(int x, int y, ListObjet lo) {
