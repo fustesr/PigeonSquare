@@ -16,32 +16,33 @@ import javax.swing.SwingUtilities;
 
 public class Main extends JFrame implements MouseListener {
 	
-	final static int nbPigeon = 5;
+	final static int nbPigeon = 7;
 	private MyCanvas canvas = new MyCanvas();
 	static Pigeon[] tabPigeon = new Pigeon[nbPigeon];
 	static ListObjet lo;
 
-	
 	int MouseX;
 	int MouseY;
 	
-
 	static Object objectLockN = new Object();
 	static Object objectLockNP = new Object();
 	
 
 	public Main() {
 		
-		canvas.setBackground(Color.GREEN);
 		lo = new ListObjet();
+		
+		canvas.setBackground(Color.GREEN);
+		
 		setLayout(new BorderLayout());
 		setSize(1200,800);
-		setTitle("Demo");
+		setTitle("PigeonSquare");
 		add("Center", canvas);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
+		
 		canvas.addMouseListener(this);
 
 	}
