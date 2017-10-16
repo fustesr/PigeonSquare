@@ -9,16 +9,15 @@ class Pigeon extends Thread {
 	private double x;
 	private double y;
 	double speed = 2;
-	
 	static Object objectLock = new Object();
-	ListNourriture ln;
+	ListObjet lo;
 	
-	public Pigeon(ListNourriture ln){
+	public Pigeon(ListObjet lo){
 
 
 		x = (int) (Math.random()*1100);
 		y = (int) (Math.random()*700);
-		this.ln = ln;
+		this.lo = lo;
 		
 		//Debug
 		//System.out.println(this.hashCode() + "x: " + x +", y: "+ y);
@@ -34,22 +33,22 @@ class Pigeon extends Thread {
 		return y;
 	}
 	
-	public void move(Nourriture n) {
+	public void move(int xo, int yo) {
 		
-		double xVel = n.getX() - x;
-		double yVel = n.getY() - y;
+		double xVel = xo - x;
+		double yVel = yo - y;
 		double mag = Math.sqrt(xVel * xVel + yVel * yVel);
 		xVel = xVel * speed / mag;
 		yVel = yVel * speed / mag;
 
-		if (x < n.getX() && (x + xVel) > n.getX()) {
-			this.x = n.getX();
-		} else if (x != n.getX()) {
+		if (x < xo && (x + xVel) > xo) {
+			this.x = xo;
+		} else if (x != xo) {
 			x += xVel;
 		}
-		if (y < n.getY() && (y + yVel) > n.getY()) {
-			y = n.getY();
-		} else if (y != n.getY()) {
+		if (y < yo && (y + yVel) > yo) {
+			y = yo;
+		} else if (y != yo) {
 			y += yVel;
 		}
 		try {
@@ -60,7 +59,17 @@ class Pigeon extends Thread {
 	}
 	
 	public void moveAfraid() {
-		System.out.println("ok");
+		int cpt = 0;
+		speed = 8;
+		int x =(int)(Math.random()*1200);
+		int y = (int)(Math.random()*800);
+		while(cpt < 70) {
+			cpt++;
+			move(x,y);
+			move(x,y);
+			move((int)(Math.random()*1200),(int)(Math.random()*800));
+		}
+		speed = 2;
 	}
 	
 	@Override
@@ -70,17 +79,17 @@ class Pigeon extends Thread {
 			Nourriture n = null;
 			
 			try {
-				while(!(Main.lb.isEmpty())) {
+				while(!(lo.listB.isEmpty())) {
 					moveAfraid();
 				}
-				if(!(ln.listN.isEmpty())) {
-					n = ln.listN.get(0);
-					double min = ln.distanceNourriture(this, n);
+				if(!(lo.listN.isEmpty())) {
+					n = (Nourriture) lo.listN.get(0);
+					double min = lo.distanceObjet(this, n);
 					
-						for(Nourriture nou : ln.listN) {
-							if(ln.distanceNourriture(this, nou) < min ) {
-								n = nou;
-								min = (ln.distanceNourriture(this, nou));
+						for(Objet nou : lo.listN) {
+							if(lo.distanceObjet(this, nou) < min ) {
+								n = (Nourriture) nou;
+								min = (lo.distanceObjet(this, nou));
 							}
 						}
 	
@@ -88,7 +97,7 @@ class Pigeon extends Thread {
 						n.manger(n,this);
 					}
 					
-					move(n);
+					move(n.getX(),n.getY());
 	
 				} else {
 					synchronized(objectLock) {

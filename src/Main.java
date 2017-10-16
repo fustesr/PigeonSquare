@@ -1,7 +1,10 @@
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -13,11 +16,10 @@ import javax.swing.SwingUtilities;
 
 public class Main extends JFrame implements MouseListener {
 	
-	final static int nbPigeon = 10;
+	final static int nbPigeon = 5;
 	private MyCanvas canvas = new MyCanvas();
 	static Pigeon[] tabPigeon = new Pigeon[nbPigeon];
-	static ArrayList<Bombe> lb = new ArrayList<Bombe>();
-	static ListNourriture ln;
+	static ListObjet lo;
 
 	
 	int MouseX;
@@ -30,7 +32,8 @@ public class Main extends JFrame implements MouseListener {
 
 	public Main() {
 		
-		ln = new ListNourriture();
+		canvas.setBackground(Color.GREEN);
+		lo = new ListObjet();
 		setLayout(new BorderLayout());
 		setSize(1200,800);
 		setTitle("Demo");
@@ -48,30 +51,19 @@ public class Main extends JFrame implements MouseListener {
 		Main fr = new Main();
 		
 		for(int i =0; i < nbPigeon; i++) {
-			tabPigeon[i] = new Pigeon(ln);
+			tabPigeon[i] = new Pigeon(lo);
 		}
 		for(Pigeon p : tabPigeon) {
 			p.start();
 		}
-		
-		while(true) {
-			System.out.println("N: " + ln.listN);
-			System.out.println("NP: " +ln.listNP);
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
+
 	}
 	
 	
 	
 	private class MyCanvas extends JPanel {
 		
-		Image pigeon = new ImageIcon("..\\PigeonSquare\\res\\pigeon2.png").getImage();
+		Image pigeon = new ImageIcon("..\\PigeonSquare\\res\\pigeon3.png").getImage();
 		Image burger = new ImageIcon("..\\PigeonSquare\\res\\burger2.png").getImage();
 		Image burgerNoir = new ImageIcon("..\\PigeonSquare\\res\\burger-noir2.png").getImage();
 		Image bombe = new ImageIcon("..\\PigeonSquare\\res\\bombe.png").getImage();
@@ -80,21 +72,22 @@ public class Main extends JFrame implements MouseListener {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			
+			
 			for(Pigeon p : tabPigeon) {
 				g.drawImage(pigeon, (int) (p.getX()-(pigeon.getWidth(canvas)/2)),(int) (p.getY()-(pigeon.getHeight(canvas)/2)), this);
 			}
 			synchronized(objectLockN){
-				for(Nourriture n : ln.listN) {
+				for(Objet n : lo.listN) {
 					g.drawImage(burger, n.getX()-(burger.getWidth(canvas)/2), n.getY()-(burger.getHeight(canvas)/2), this);
 				}
 			}
 			synchronized(objectLockNP) {
-				for(Nourriture np : ln.listNP) {
+				for(Objet np : lo.listNP) {
 					g.drawImage(burgerNoir, np.getX()-(burgerNoir.getWidth(canvas)/2), np.getY()-(burgerNoir.getHeight(canvas)/2), this);
 				}
 			}
 			
-			for(Bombe b: lb) {
+			for(Objet b: lo.listB) {
 				g.drawImage(bombe, b.getX()-(bombe.getWidth(canvas)/2), b.getY()-(bombe.getHeight(canvas)/2), this);
 			}
 
@@ -134,22 +127,21 @@ public class Main extends JFrame implements MouseListener {
 		if(SwingUtilities.isLeftMouseButton(e)) {
 			MouseX = e.getX();
 			MouseY = e.getY();
-			//System.out.println("MouseX: "+ MouseX + " MouseY: " + MouseY);
-			Nourriture n = new Nourriture(MouseX, MouseY, ln);
-			System.out.print("N: "+ n.hashCode());
-			ln.add(ln.listN, n);
+			Nourriture n = new Nourriture(MouseX, MouseY, lo);
+			lo.add(lo.listN, n);
 			
 		} else if(SwingUtilities.isRightMouseButton(e)) {
 			MouseX = e.getX();
 			MouseY = e.getY();
-			Bombe c = new Bombe(MouseX, MouseY);
-			lb.add(c);
+			Bombe c = new Bombe(MouseX, MouseY, lo);
+			lo.add(lo.listB, c);
 		}
 		synchronized(Pigeon.objectLock) {
 			Pigeon.objectLock.notifyAll();
 		}
 
 	}
+
 
 }
 	

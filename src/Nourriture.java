@@ -3,31 +3,23 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
-public class Nourriture implements ActionListener{
+public class Nourriture extends Objet implements ActionListener {
 
-	private int x;
-	private int y;
-	ListNourriture ln;
+
+	ListObjet lo;
 	private boolean comestible;
-	Timer t = new Timer(7000,this);
+	Timer t = new Timer(8000,this);
 	
-	public Nourriture(int x, int y, ListNourriture ln) {
+	public Nourriture(int x, int y, ListObjet lo) {
 		
 		this.x = x;
 		this.y = y;
-		this.ln = ln;
+		this.lo = lo;
 		comestible = true;
 		t.start();
 	}
 	
-	public int getX() {
-		
-		return x;
-	}
-	public int getY() {
-		
-		return y;
-	}
+	
 	public boolean getComestible() {
 		return comestible;
 	}
@@ -35,22 +27,21 @@ public class Nourriture implements ActionListener{
 	
 	public synchronized void manger(Nourriture n, Pigeon p) {
 		
-		System.out.println("Pigeon : " + p.hashCode() + " mange!");
 		synchronized(Main.objectLockN) {
-			ln.remove(ln.listN, n);
+			lo.remove(lo.listN, n);
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		if(ln.listN.indexOf(this) != -1) {
+		if(lo.listN.indexOf(this) != -1) {
 			comestible = false;
 			synchronized(Main.objectLockN) {
-				ln.remove(ln.listN, this);
+				lo.remove(lo.listN, this);
 			}
 			synchronized(Main.objectLockN) {
-				ln.add(ln.listNP,this);
+				lo.add(lo.listNP,this);
 			}
 
 		} 

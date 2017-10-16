@@ -3,33 +3,26 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
-public class Bombe implements ActionListener {
+public class Bombe extends Objet implements ActionListener {
 	
-	private int x;
-	private int y;
+	
+	ListObjet lo;
 
 	Timer t = new Timer(3000,this);
 	
-	public Bombe(int x, int y) {
+	public Bombe(int x, int y, ListObjet lo) {
 		
 		this.x = x;
 		this.y = y;
+		this.lo = lo;
 		t.start();
 	}
 	
-	public int getX() {
-		
-		return x;
-	}
-	public int getY() {
-		
-		return y;
-	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		Main.lb.remove(this);
+		lo.remove(lo.listB, this);
 		t.stop();
 
 	}
